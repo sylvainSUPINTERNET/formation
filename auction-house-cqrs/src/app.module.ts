@@ -1,12 +1,23 @@
 import { Module } from '@nestjs/common';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
+
 import { ClientsModule, Transport } from '@nestjs/microservices';
 import { randomUUID } from 'crypto';
 import { CqrsModule } from '@nestjs/cqrs';
+import { AppController } from './controllers/app.controller';
+import { AppService } from './services/app.service';
+import { CreateBidEvent } from './events/create-bid-event';
+import { CreateBidEventHandler } from './events/handlers/create-bid.event.handler';
+import { AuctionRepository } from './repositories/auction.repository';
+import { CreateAuctionHandler } from './commands/handlers/create-auction.handler';
+import { CreateBidHandler } from './commands/handlers/bid-create.handler';
+
+export const CommandHandlers = [CreateBidHandler, CreateAuctionHandler];
+export const EventHandlers =  [CreateBidEventHandler];
+
 
 @Module({
   imports: [
+    CqrsModule,
     ClientsModule.register([
       {
         name: 'MY_APP_SERVICE',
@@ -19,9 +30,11 @@ import { CqrsModule } from '@nestjs/cqrs';
         },
       }
     ]),
-    CqrsModule
   ],
   controllers: [AppController],
-  providers: [AppService],
+  providers: [AppService,
+    ...CommandHandlers,
+    ...EventHandlers,
+    AuctionRepository],
 })
 export class AppModule {}
