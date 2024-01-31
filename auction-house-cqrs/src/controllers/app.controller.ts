@@ -4,12 +4,12 @@ import { Kafka } from 'kafkajs';
 import { AuctionDto } from 'src/dto/AuctionDto';
 import { AppService } from 'src/services/app.service';
 
-@Controller()
+@Controller('api')
 export class AppController {
 
   constructor (private appService:AppService) {}
 
-  @Post()
+  @Post('/auction')
   async createAuction(@Body() auction: AuctionDto, @Res() res) {
     
     await this.appService.createAuction(auction);
@@ -18,6 +18,17 @@ export class AppController {
       message: 'Auction created successfully',
       data: auction
     });
+  }
+
+  @Post('/bid')
+  async bid(@Body() bid: any, @Res() res) {
+
+    await this.appService.bid(bid);
+
+    res.status(200).json({
+      message: 'Bid placed successfully',
+      data: bid
+    })
   }
 
   
