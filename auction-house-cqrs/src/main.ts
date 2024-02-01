@@ -10,15 +10,16 @@ async function bootstrap() {
     origin: '*',
   });
 
-  app.connectMicroservice<MicroserviceOptions>({
-    transport: Transport.KAFKA,
-    options: {
-      client: {
-        clientId: 'my-app',
-        brokers: ['localhost:9092']
-      }
-    },
-  });
+  // kafka
+  // app.connectMicroservice<MicroserviceOptions>({
+  //   transport: Transport.KAFKA,
+  //   options: {
+  //     client: {
+  //       clientId: 'my-app',
+  //       brokers: ['localhost:9092']
+  //     }
+  //   },
+  // });
 
   await app.startAllMicroservices();
   await app.listen(3000);

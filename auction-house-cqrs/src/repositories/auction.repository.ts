@@ -41,3 +41,4 @@ export class AuctionRepository  {
             return new Promise((resolve, reject) => { resolve(auctionDto) });
         }
 }
+

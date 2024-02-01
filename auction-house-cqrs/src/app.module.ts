@@ -10,6 +10,10 @@ import { CreateBidEventHandler } from './events/handlers/create-bid.event.handle
 import { AuctionRepository } from './repositories/auction.repository';
 import { CreateAuctionHandler } from './commands/handlers/create-auction.handler';
 import { CreateBidHandler } from './commands/handlers/bid-create.handler';
+import { DatabaseModule } from './db/database.module';
+import { AuctionProviders } from './db/entities/auction/auction.providers';
+import { AuctionServices } from './services/auction/auction.service';
+import { ConfigModule } from '@nestjs/config';
 
 export const CommandHandlers = [CreateBidHandler, CreateAuctionHandler];
 export const EventHandlers =  [CreateBidEventHandler];
@@ -17,24 +21,31 @@ export const EventHandlers =  [CreateBidEventHandler];
 
 @Module({
   imports: [
+    ConfigModule.forRoot({
+      isGlobal: true
+    }),
+    DatabaseModule,
     CqrsModule,
-    ClientsModule.register([
-      {
-        name: 'MY_APP_SERVICE',
-        transport: Transport.KAFKA,
-        options: {
-          client: {
-            clientId: 'my-app',
-            brokers: ['localhost:9092']
-          }
-        },
-      }
-    ]),
+    // KAKFA
+    // ClientsModule.register([
+    //   {
+    //     name: 'MY_APP_SERVICE',
+    //     transport: Transport.KAFKA,
+    //     options: {
+    //       client: {
+    //         clientId: 'my-app',
+    //         brokers: ['localhost:9092']
+    //       }
+    //     },
+    //   }
+    // ]),
   ],
   controllers: [AppController],
   providers: [AppService,
     ...CommandHandlers,
     ...EventHandlers,
-    AuctionRepository],
+    AuctionRepository,
+    ...AuctionProviders,
+    AuctionServices],
 })
 export class AppModule {}

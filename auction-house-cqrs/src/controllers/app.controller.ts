@@ -3,11 +3,12 @@ import { Client, ClientKafka, Ctx, EventPattern, KafkaContext, MessagePattern, P
 import { Kafka } from 'kafkajs';
 import { AuctionDto } from 'src/dto/AuctionDto';
 import { AppService } from 'src/services/app.service';
+import { AuctionServices } from 'src/services/auction/auction.service';
 
 @Controller('api')
 export class AppController {
 
-  constructor (private appService:AppService) {}
+  constructor (private appService:AppService, private auctionService:AuctionServices) {}
 
   @Post('/auction')
   async createAuction(@Body() auction: AuctionDto, @Res() res) {
@@ -28,6 +29,16 @@ export class AppController {
     res.status(200).json({
       message: 'Bid placed successfully',
       data: bid
+    })
+  }
+
+
+  @Get('/test')
+  async test(@Res() res) {
+
+    res.status(200).json({
+      message: 'Test successfull',
+      data: await this.auctionService.findAll()
     })
   }
 
